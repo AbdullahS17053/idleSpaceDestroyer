@@ -44,12 +44,12 @@ namespace Destructible2D
 
 			if (Additive == true)
 			{
-				body.velocity        += Random.insideUnitCircle * MaxLinearSpeed;
+				body.linearVelocity        += Random.insideUnitCircle * MaxLinearSpeed;
 				body.angularVelocity += Random.value            * MaxAngularSpeed;
 			}
 			else
 			{
-				body.velocity        = Random.insideUnitCircle * MaxLinearSpeed;
+				body.linearVelocity        = Random.insideUnitCircle * MaxLinearSpeed;
 				body.angularVelocity = Random.value            * MaxAngularSpeed;
 			}
 		}

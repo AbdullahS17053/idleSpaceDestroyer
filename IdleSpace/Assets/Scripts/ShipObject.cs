@@ -38,8 +38,11 @@ public class ShipObject : MonoBehaviour {
                     return true;
                 break;
             case ShipShop.ShipUnlockCondition.day:
-                if (OfflineEarning._instance.allTimeSinceFirstTime.Hours + 12 >= conditionValue * 24)
+
+                if (OfflineEarning._instance != null &&
+                    OfflineEarning._instance.allTimeSinceFirstTime.TotalDays >= conditionValue)
                     return true;
+
                 break;
         }
 

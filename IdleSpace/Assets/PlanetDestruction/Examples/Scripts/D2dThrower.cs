@@ -84,7 +84,7 @@ namespace Destructible2D
 						var angle = Random.Range(-0.5f, 0.5f) * Spread * Mathf.Deg2Rad;
 						var speed = Random.Range(SpeedMin, SpeedMax);
 
-						rigidbody.velocity        = new Vector2(Mathf.Sin(angle) * speed, Mathf.Cos(angle) * speed);
+						rigidbody.linearVelocity        = new Vector2(Mathf.Sin(angle) * speed, Mathf.Cos(angle) * speed);
 						rigidbody.angularVelocity = Random.Range(-180.0f, 180.0f);
 					}
 				}

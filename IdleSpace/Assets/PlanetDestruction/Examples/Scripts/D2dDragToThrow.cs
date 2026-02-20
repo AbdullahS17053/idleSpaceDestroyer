@@ -93,7 +93,7 @@ namespace Destructible2D
 
 					if (rigidbody2D != null)
 					{
-						rigidbody2D.velocity = (currentPos - startPos) * ProjectileSpeed;
+						rigidbody2D.linearVelocity = (currentPos - startPos) * ProjectileSpeed;
 					}
 
 					angle += Random.Range(-ProjectileSpread, ProjectileSpread);

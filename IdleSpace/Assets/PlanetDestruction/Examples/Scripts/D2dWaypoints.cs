@@ -77,7 +77,7 @@ namespace Destructible2D
 			// Acceleration
 			if (body == null) body = GetComponent<Rigidbody2D>();
 
-			body.velocity = D2dHelper.Dampen2(body.velocity, vector * SpeedBoost, Acceleration, Time.deltaTime);
+			body.linearVelocity = D2dHelper.Dampen2(body.linearVelocity, vector * SpeedBoost, Acceleration, Time.deltaTime);
 		}
 
 		private void ChangeTargetPoint()

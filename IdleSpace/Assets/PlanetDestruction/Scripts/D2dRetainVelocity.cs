@@ -58,7 +58,7 @@ namespace Destructible2D
 		{
 			if (body == null) body = GetComponent<Rigidbody2D>();
 
-			velocity        = body.velocity;
+			velocity        = body.linearVelocity;
 			angularVelocity = body.angularVelocity;
 		}
 
@@ -74,7 +74,7 @@ namespace Destructible2D
 
 					if (cloneRigidbody2D != null)
 					{
-						cloneRigidbody2D.velocity        = velocity;
+						cloneRigidbody2D.linearVelocity        = velocity;
 						cloneRigidbody2D.angularVelocity = angularVelocity;
 					}
 				}
