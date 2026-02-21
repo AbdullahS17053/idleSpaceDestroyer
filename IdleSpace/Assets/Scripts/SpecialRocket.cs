@@ -32,6 +32,7 @@ public class SpecialRocket : MonoBehaviour {
         rocket.transform.localPosition = Vector3.zero;
 
         timer = 0;
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.spawn);
     }
 
     public void LaunchMultipleRockets() {

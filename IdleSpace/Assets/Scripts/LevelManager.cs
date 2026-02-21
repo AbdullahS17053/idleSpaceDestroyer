@@ -44,6 +44,7 @@ public class LevelManager : MonoBehaviour {
     /// Instantiating new planet for new level
     /// </summary>
     public void CreateNewPlanet() {
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.complete);
         if (currentPlanet != null) Destroy(currentPlanet.gameObject);
 
         currentPlanet = Instantiate(planets[(currentLevel - 1) % (planets.Length)], planetParent).GetComponent<Planet>();

@@ -19,6 +19,7 @@ public class Bullet : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.tag == "Planet") {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.explosion);
             LevelManager._instance.currentPlanet.currentHp -= Upgrades._instance.damagePerClick;
             CurrencyManager._instance.AddCoins(Upgrades._instance.damagePerClick);
 
