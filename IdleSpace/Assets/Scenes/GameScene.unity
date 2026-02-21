@@ -6889,9 +6889,9 @@ MonoBehaviour:
   musicSource: {fileID: 528849411}
   sfxSource: {fileID: 528849410}
   uiSource: {fileID: 528849409}
-  backgroundMusic: {fileID: 0}
+  backgroundMusic: {fileID: 8300000, guid: ad6977eccfccf7945bad83815b1767dc, type: 3}
   buttonClick: {fileID: 8300000, guid: 0e6f31b874731ec448e02c465274f848, type: 3}
-  explosion: {fileID: 8300000, guid: 661d792df362c5f4bb54c4099e31a07d, type: 3}
+  explosion: {fileID: 8300000, guid: 02c49cde2aa6f5b40a40ea9be3a9463f, type: 3}
   spawn: {fileID: 8300000, guid: 929b775fbc79b394b9869c65c82e495b, type: 3}
   complete: {fileID: 8300000, guid: fe0812e51d2c1ad41994fa45e0a6856b, type: 3}
 --- !u!4 &528849408
@@ -7116,9 +7116,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.25
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

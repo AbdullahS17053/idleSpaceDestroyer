@@ -30,10 +30,10 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    /*private void Start()
+    private void Start()
     {
         PlayMusic(backgroundMusic);
-    }*/
+    }
 
     #region Music
     public void PlayMusic(AudioClip clip)
