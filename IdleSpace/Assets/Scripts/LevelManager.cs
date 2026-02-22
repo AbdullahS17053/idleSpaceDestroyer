@@ -20,6 +20,16 @@ public class LevelManager : MonoBehaviour {
     public LevelCircle[] levelCircles;
     public Image fillImage;
     public Text percentText;
+    
+    [Header("Camera Effects")]
+    public Camera mainCam;
+    public float zoomAmount = 1.5f;
+    public float zoomDuration = 1f;
+    public float shakeDuration = 1f;
+    public float shakeMagnitude = 0.2f;
+
+    Vector3 originalCamPos;
+    float originalCamSize;
 
     private void Awake() {
         _instance = this;
@@ -28,7 +38,13 @@ public class LevelManager : MonoBehaviour {
     // Use this for initialization
     void Start() {
         currentLevel = PlayerPrefs.GetInt("CURRENT_LEVEL", 1);
+        if (mainCam == null)
+            mainCam = Camera.main;
+
+        originalCamPos = mainCam.transform.localPosition;
+        originalCamSize = mainCam.orthographicSize;
         CreateNewPlanet();
+        
 
         RocketSpawner._instance.UnlockSpecialRockets();
     }
@@ -45,14 +61,18 @@ public class LevelManager : MonoBehaviour {
     /// </summary>
     public void CreateNewPlanet() {
         AudioManager.Instance.PlaySFX(AudioManager.Instance.complete);
+
         if (currentPlanet != null) Destroy(currentPlanet.gameObject);
 
-        currentPlanet = Instantiate(planets[(currentLevel - 1) % (planets.Length)], planetParent).GetComponent<Planet>();
+        currentPlanet = Instantiate(planets[(currentLevel - 1) % (planets.Length)], planetParent)
+            .GetComponent<Planet>();
 
         SetLevelCircles();
 
         if (CoinShop._instance != null)
             CoinShop._instance.SetTexts();
+
+        StartCoroutine(CameraEffect());
     }
 
     /// <summary>
@@ -84,5 +104,42 @@ public class LevelManager : MonoBehaviour {
         yield return new WaitForSeconds(t);
 
         CreateNewPlanet();
+    }
+    
+    IEnumerator CameraEffect()
+    {
+        float elapsed = 0f;
+
+        // Zoom In
+        while (elapsed < zoomDuration)
+        {
+            mainCam.orthographicSize = Mathf.Lerp(originalCamSize, 
+                originalCamSize - zoomAmount, 
+                elapsed / zoomDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        elapsed = 0f;
+
+        // Shake + Zoom Out
+        while (elapsed < shakeDuration)
+        {
+            Vector3 randomOffset = Random.insideUnitSphere * shakeMagnitude;
+            randomOffset.z = 0;
+
+            mainCam.transform.localPosition = originalCamPos + randomOffset;
+
+            mainCam.orthographicSize = Mathf.Lerp(originalCamSize - zoomAmount, 
+                originalCamSize, 
+                elapsed / shakeDuration);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Reset
+        mainCam.transform.localPosition = originalCamPos;
+        mainCam.orthographicSize = originalCamSize;
     }
 }
