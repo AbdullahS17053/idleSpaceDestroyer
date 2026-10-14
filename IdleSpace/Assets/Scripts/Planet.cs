@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -58,7 +58,9 @@ public class Planet : MonoBehaviour {
         var textAnim = ClickAnimation._instance.GetObjectFromPool();
         textAnim.SetActive(true);
         textAnim.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10;
-        textAnim.GetComponent<Text>().text = "+" + Upgrades._instance.damagePerClick + "";
+        float tapDmg = Upgrades._instance != null ? Mathf.Max(1f, Upgrades._instance.damagePerClick) : 1f;
+        int displayTap = Mathf.Max(1, Mathf.RoundToInt(tapDmg));
+        textAnim.GetComponent<Text>().text = "+" + (displayTap >= 10000 ? CurrencyManager.GetSuffix(displayTap) : displayTap.ToString());
         textAnim.GetComponent<Text>().color = Color.white;
     }
 

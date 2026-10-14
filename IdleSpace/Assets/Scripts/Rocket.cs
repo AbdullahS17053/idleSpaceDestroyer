@@ -59,13 +59,19 @@ public class Rocket : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.tag == "Planet") {
+            float appliedDamage = 0f;
             if (!specialRocket) {
-                LevelManager._instance.currentPlanet.currentHp -= Mathf.Min(damage, LevelManager._instance.currentPlanet.maxHp / 20f / (1 / Upgrades._instance.secondsToSpawnMissile));
+                appliedDamage = Mathf.Min(damage, LevelManager._instance.currentPlanet.maxHp / 20f / (1 / Upgrades._instance.secondsToSpawnMissile));
+                LevelManager._instance.currentPlanet.currentHp -= appliedDamage;
                 CurrencyManager._instance.AddCoins(Mathf.Min(damage, LevelManager._instance.currentPlanet.maxHp / 40f / (1 / Upgrades._instance.secondsToSpawnMissile)));
             } else {
-                LevelManager._instance.currentPlanet.currentHp -= Mathf.Min(damage, LevelManager._instance.currentPlanet.maxHp / 3);
-                CurrencyManager._instance.AddCoins(Mathf.Min(damage, LevelManager._instance.currentPlanet.maxHp / 3));
+                appliedDamage = Mathf.Min(damage, LevelManager._instance.currentPlanet.maxHp / 3);
+                LevelManager._instance.currentPlanet.currentHp -= appliedDamage;
+                CurrencyManager._instance.AddCoins(appliedDamage);
             }
+
+            if (DPSDisplay.Instance != null)
+                DPSDisplay.Instance.RegisterDamage(appliedDamage);
 
             if (explosionPrefab != null) {
                 var g = Instantiate(explosionPrefab, transform.parent);

@@ -15,6 +15,13 @@ public class Ship : MonoBehaviour {
 
     float minTimeBetweenTwoShoots = 0.05f;
 
+    [Header("Auto Shoot Boost (Rewarded Ad)")]
+    public float autoShootBoostTimer = 0f;
+    public float boostedFireRate = 0.08f;
+    private float boostShootTimer = 0f;
+
+    public bool IsAutoShootBoostActive => autoShootBoostTimer > 0f;
+
     private void Awake() {
         _instance = this;
     }
@@ -34,7 +41,22 @@ public class Ship : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
             Shoot();
 
-        AutoShoot();
+        // Handle Auto-Shooting (boosted vs regular)
+        if (autoShootBoostTimer > 0f) {
+            autoShootBoostTimer -= Time.deltaTime;
+            boostShootTimer += Time.deltaTime;
+
+            if (boostShootTimer >= boostedFireRate && RocketSpawner._instance != null && !RocketSpawner._instance.isPaused) {
+                boostShootTimer = 0f;
+                Shoot();
+            }
+        } else {
+            AutoShoot();
+        }
+    }
+
+    public void ActivateAutoShootBoost(float durationInSeconds) {
+        autoShootBoostTimer = Mathf.Max(autoShootBoostTimer + durationInSeconds, durationInSeconds);
     }
 
     float offsetX;
@@ -71,7 +93,7 @@ public class Ship : MonoBehaviour {
     }
 
     void AutoShoot() {
-        if (shootTimer > Upgrades._instance.secondsToShoot && !RocketSpawner._instance.isPaused) {
+        if (Upgrades._instance != null && shootTimer > Upgrades._instance.secondsToShoot && (RocketSpawner._instance == null || !RocketSpawner._instance.isPaused)) {
             Shoot();
             shootTimer = 0;
         }
@@ -85,7 +107,7 @@ public class Ship : MonoBehaviour {
 
     void CreateBullet() {
         GameObject bullet;
-        if (ShipShop._instance.currentShip.bulletPrefab != null) {
+        if (ShipShop._instance != null && ShipShop._instance.currentShip != null && ShipShop._instance.currentShip.bulletPrefab != null) {
             bullet = Instantiate(ShipShop._instance.currentShip.bulletPrefab);
         } else {
             bullet = Instantiate(bulletPrefab);
@@ -93,6 +115,6 @@ public class Ship : MonoBehaviour {
 
         bullet.transform.SetParent(transform.parent);
         bullet.transform.localScale = Vector3.one;
-        bullet.transform.position = fireTransform.position;
+        bullet.transform.position = fireTransform != null ? fireTransform.position : transform.position;
     }
 }
