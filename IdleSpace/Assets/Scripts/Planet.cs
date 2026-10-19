@@ -10,6 +10,19 @@ public class Planet : MonoBehaviour {
     public GameObject explosionPrefab;
     bool isDestroyed = false;
 
+    private void Awake() {
+        // Ensure the planet always has a 2D collider tagged Planet for projectile detection
+        Collider2D col = GetComponentInChildren<Collider2D>();
+        if (col == null) {
+            CircleCollider2D circleCol = gameObject.AddComponent<CircleCollider2D>();
+            circleCol.isTrigger = true;
+            circleCol.radius = 2.2f;
+        }
+        if (gameObject.tag != "Planet") {
+            gameObject.tag = "Planet";
+        }
+    }
+
     // Use this for initialization
     void Start() {
         CalculateHp();

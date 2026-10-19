@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +20,9 @@ public class BonusReward : MonoBehaviour {
     // Use this for initialization
     void Start() {
         PlayerPrefs.SetInt("LAUNCH_AMOUNT", PlayerPrefs.GetInt("LAUNCH_AMOUNT") + 1);
+        if (dailyRewardObject != null && dailyRewardObject.GetComponent<DailyRewardManager>() == null) {
+            dailyRewardObject.AddComponent<DailyRewardManager>();
+        }
     }
 
     // Update is called once per frame

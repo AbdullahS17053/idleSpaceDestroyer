@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -80,7 +80,8 @@ public class Rocket : MonoBehaviour {
 
             ClickAnimation.SetText(transform, (int)damage, color);
 
-            if (LevelManager._instance.currentPlanet.GetComponent<Destructible2D.D2dDestructible>().Damage < 3500)
+            var destructible = (LevelManager._instance != null && LevelManager._instance.currentPlanet != null) ? LevelManager._instance.currentPlanet.GetComponent<Destructible2D.D2dDestructible>() : null;
+            if (destructible != null && destructible.Damage < 3500 && RocketSpawner._instance != null)
                 RocketSpawner._instance.CreateDestroyEffect(transform.position, destructionRadius);
 
             Destroy(gameObject);

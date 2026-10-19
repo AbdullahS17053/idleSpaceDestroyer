@@ -8,13 +8,11 @@ public class LevelManager : MonoBehaviour {
 
     public static LevelManager _instance;
 
-
     public int currentLevel;
 
     public GameObject[] planets;
     public Transform planetParent;
     public Planet currentPlanet;
-
 
     [Header("Level Bar")]
     public LevelCircle[] levelCircles;
@@ -44,7 +42,6 @@ public class LevelManager : MonoBehaviour {
         originalCamPos = mainCam.transform.localPosition;
         originalCamSize = mainCam.orthographicSize;
         CreateNewPlanet();
-        
 
         RocketSpawner._instance.UnlockSpecialRockets();
     }
@@ -53,7 +50,6 @@ public class LevelManager : MonoBehaviour {
     void Update() {
         fillImage.fillAmount = 1 - currentPlanet.currentHp / (float)currentPlanet.maxHp;
         percentText.text = (int)(fillImage.fillAmount * 100) + "%";
-
     }
 
     /// <summary>
