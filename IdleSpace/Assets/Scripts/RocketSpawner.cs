@@ -29,31 +29,40 @@ public class RocketSpawner : MonoBehaviour {
     void Update() {
         timer += Time.deltaTime;
 
-        if (timer > upgrades.secondsToSpawnMissile && !isPaused) {
+        if (upgrades != null && timer > upgrades.secondsToSpawnMissile && !isPaused) {
             timer = 0;
             SpawnBaseRocket();
         }
     }
 
     void SpawnBaseRocket() {
-        var rocket = Instantiate(rocketPrefabs[Random.Range(0, Mathf.Min(rocketPrefabs.Length, LevelManager._instance.currentLevel / 2 + 1))], parentTransforms[Random.Range(0, parentTransforms.Length)]);
+        if (rocketPrefabs == null || rocketPrefabs.Length == 0 || parentTransforms == null || parentTransforms.Length == 0) return;
+        int maxIndex = LevelManager._instance != null ? LevelManager._instance.currentLevel / 2 + 1 : 1;
+        var rocket = Instantiate(rocketPrefabs[Random.Range(0, Mathf.Min(rocketPrefabs.Length, maxIndex))], parentTransforms[Random.Range(0, parentTransforms.Length)]);
         rocket.transform.localPosition = Vector3.zero;
     }
 
     public SpecialRocket[] specialRockets;
 
     public void UnlockSpecialRockets() {
+        if (specialRockets == null || LevelManager._instance == null) return;
         foreach (SpecialRocket r in specialRockets) {
-            if (r.levelToUnlock <= LevelManager._instance.currentLevel)
-                r.gameObject.SetActive(true);
-            else r.gameObject.SetActive(false);
+            if (r != null) {
+                if (r.levelToUnlock <= LevelManager._instance.currentLevel)
+                    r.gameObject.SetActive(true);
+                else r.gameObject.SetActive(false);
+            }
         }
     }
 
     public void CreateDestroyEffect(Vector3 pos, float radius) {
+        if (destroyEffect == null) return;
         var effect = Instantiate(destroyEffect);
         effect.transform.position = pos;
 
-        effect.GetComponent<Destructible2D.D2dExplosion>().StampSize = new Vector2(radius, radius);
+        var exp = effect.GetComponent<Destructible2D.D2dExplosion>();
+        if (exp != null) {
+            exp.StampSize = new Vector2(radius, radius);
+        }
     }
 }

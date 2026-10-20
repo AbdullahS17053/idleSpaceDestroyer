@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,7 +29,9 @@ public class Planet : MonoBehaviour {
 
         currentHp = maxHp;
 
-        RocketSpawner._instance.isPaused = false;
+        if (RocketSpawner._instance != null) {
+            RocketSpawner._instance.isPaused = false;
+        }
 
         StartCoroutine(ScaleUpDown(true));
     }
@@ -37,20 +39,33 @@ public class Planet : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (currentHp <= 0 && !isDestroyed) {
-            RocketSpawner._instance.isPaused = true;
+            // Immediately mark destroyed so this block only ever executes once
+            isDestroyed = true;
+
+            if (RocketSpawner._instance != null) {
+                RocketSpawner._instance.isPaused = true;
+            }
 
             if (explosionPrefab != null) {
                 var g = Instantiate(explosionPrefab);
                 g.transform.position = transform.position;
             }
 
-            GetComponent<Destructible2D.D2dDestructible>().enabled = false;
-            GetComponent<Destructible2D.D2dPolygonCollider>().enabled = false;
+            // Safe checks in case planet does not have Destructible2D components
+            var destructible = GetComponent<Destructible2D.D2dDestructible>();
+            if (destructible != null) destructible.enabled = false;
+
+            var polyCol = GetComponent<Destructible2D.D2dPolygonCollider>();
+            if (polyCol != null) polyCol.enabled = false;
+
+            var col = GetComponent<Collider2D>();
+            if (col != null) col.enabled = false;
 
             StartCoroutine(ScaleUpDown(false));
-            LevelManager._instance.LevelCompleted();
 
-            isDestroyed = true;
+            if (LevelManager._instance != null) {
+                LevelManager._instance.LevelCompleted();
+            }
 
             PlayerPrefs.SetFloat("ALL_DAMAGE", PlayerPrefs.GetFloat("ALL_DAMAGE") + maxHp);
         }
@@ -66,15 +81,19 @@ public class Planet : MonoBehaviour {
         if (onClickCoroutine != null) StopCoroutine(onClickCoroutine);
         onClickCoroutine = StartCoroutine(ClickAnim());
 
-        Ship._instance.Shoot();
+        if (Ship._instance != null) {
+            Ship._instance.Shoot();
+        }
 
-        var textAnim = ClickAnimation._instance.GetObjectFromPool();
-        textAnim.SetActive(true);
-        textAnim.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10;
-        float tapDmg = Upgrades._instance != null ? Mathf.Max(1f, Upgrades._instance.damagePerClick) : 1f;
-        int displayTap = Mathf.Max(1, Mathf.RoundToInt(tapDmg));
-        textAnim.GetComponent<Text>().text = "+" + (displayTap >= 10000 ? CurrencyManager.GetSuffix(displayTap) : displayTap.ToString());
-        textAnim.GetComponent<Text>().color = Color.white;
+        if (ClickAnimation._instance != null) {
+            var textAnim = ClickAnimation._instance.GetObjectFromPool();
+            textAnim.SetActive(true);
+            textAnim.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10;
+            float tapDmg = Upgrades._instance != null ? Mathf.Max(1f, Upgrades._instance.damagePerClick) : 1f;
+            int displayTap = Mathf.Max(1, Mathf.RoundToInt(tapDmg));
+            textAnim.GetComponent<Text>().text = "+" + (displayTap >= 10000 ? CurrencyManager.GetSuffix(displayTap) : displayTap.ToString());
+            textAnim.GetComponent<Text>().color = Color.white;
+        }
     }
 
     IEnumerator ClickAnim() {
@@ -117,8 +136,16 @@ public class Planet : MonoBehaviour {
     }
 
     void CalculateHp() {
-        int level = LevelManager._instance.currentLevel;
+        int level = LevelManager._instance != null ? LevelManager._instance.currentLevel : PlayerPrefs.GetInt("CURRENT_LEVEL", 1);
 
-        maxHp = 130 + 70 * level + 2.5f * level * level + level / 6 * 150;
+        float baseHp = 130f + 70f * level + 2.5f * level * level + (level / 6) * 150f;
+
+        if (level > 22) {
+            // Endless progression: planets beyond level 22 have boosted health scaling
+            int extraLevels = level - 22;
+            baseHp = (baseHp + extraLevels * 300f) * Mathf.Pow(1.08f, extraLevels);
+        }
+
+        maxHp = Mathf.Round(baseHp);
     }
 }
