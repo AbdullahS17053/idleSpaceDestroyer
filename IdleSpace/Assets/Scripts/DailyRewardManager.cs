@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -186,11 +186,12 @@ public class DailyRewardManager : MonoBehaviour {
                 ShowFloatingReward("+" + CurrencyManager.GetSuffix((int)coinsDay2) + " COINS!");
                 break;
             case 3:
-                // Day 3 unlocks Ship 3 (Explorer ship)
+                // Day 3 unlocks Ship with id 3 (Golden Wings, +10% COINS)
                 PlayerPrefs.SetInt("SHIP_UNLOCKED_3", 1);
+                PlayerPrefs.SetInt("DAILY_CLAIMED_DAY_3", 1);
                 float coinsDay3 = Mathf.Max(15000f, planetHp * 10f);
                 if (CurrencyManager._instance != null) CurrencyManager._instance.AddCoins(coinsDay3);
-                ShowFloatingReward("SPACESHIP UNLOCKED: EXPLORER (+10% COINS)!");
+                ShowFloatingReward("SPACESHIP UNLOCKED: GOLDEN WINGS (+10% COINS)!");
                 break;
             case 4:
                 float coinsDay4 = Mathf.Max(20000f, planetHp * 12f);
@@ -208,19 +209,24 @@ public class DailyRewardManager : MonoBehaviour {
                 ShowFloatingReward("+" + CurrencyManager.GetSuffix((int)coinsDay6) + " COINS!");
                 break;
             case 7:
-                // Day 7 unlocks Ship 1 (Destroyer ship)
+                // Day 7 unlocks Ship with id 1 (Falcon F9, +15% CLICK DAMAGE)
                 PlayerPrefs.SetInt("SHIP_UNLOCKED_1", 1);
+                PlayerPrefs.SetInt("DAILY_CLAIMED_DAY_7", 1);
                 float coinsDay7 = Mathf.Max(50000f, planetHp * 30f);
                 if (CurrencyManager._instance != null) CurrencyManager._instance.AddCoins(coinsDay7);
-                ShowFloatingReward("SPECIAL SHIP UNLOCKED: DESTROYER (+15% TAP DAMAGE)!");
+                ShowFloatingReward("SPECIAL SHIP UNLOCKED: FALCON F9 (+15% CLICK DAMAGE)!");
                 break;
         }
 
         // Refresh ShipShop immediately
-        if (ShipShop._instance != null) {
+        if (ShipShop._instance != null && ShipShop._instance.ships != null) {
             foreach (var ship in ShipShop._instance.ships) {
-                if (ship != null && ship.CheckIfUnlocked()) {
-                    ship.Unlock();
+                if (ship != null) {
+                    if (ship.CheckIfUnlocked()) {
+                        ship.Unlock();
+                    } else {
+                        ship.Lock();
+                    }
                 }
             }
         }

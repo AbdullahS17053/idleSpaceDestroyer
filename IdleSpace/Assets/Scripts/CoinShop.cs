@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,12 +33,18 @@ public class CoinShop : MonoBehaviour {
 
     public void UpdatePriceLabels() {
         string[] prices = new string[] { "$0.99", "$2.99", "$4.99", "$9.99" };
-        var texts = GetComponentsInChildren<Text>(true);
-        int idx = 0;
-        foreach (var t in texts) {
-            if (t != null && (t.text.Trim() == "345" || t.text.Trim() == "")) {
-                t.text = (idx < prices.Length) ? prices[idx] : "$11.99";
-                idx++;
+        if (coinTexts == null) return;
+
+        for (int i = 0; i < coinTexts.Length; i++) {
+            if (coinTexts[i] != null && coinTexts[i].transform.parent != null) {
+                // Only update the buy button text inside this specific coin package card,
+                // never touch other UI elements under Shop such as ShipShop or default spaceship.
+                Text[] texts = coinTexts[i].transform.parent.GetComponentsInChildren<Text>(true);
+                foreach (var t in texts) {
+                    if (t != null && t != coinTexts[i]) {
+                        t.text = (i < prices.Length) ? prices[i] : "$11.99";
+                    }
+                }
             }
         }
     }

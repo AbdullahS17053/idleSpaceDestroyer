@@ -17,24 +17,38 @@ public class ShipShop : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        ships[0].Unlock();
-        ships[0].OnClick(false);
+        int selectedShipId = PlayerPrefs.GetInt("CURRENT_SHIP", 0);
+        ShipObject shipToSelect = null;
 
-		foreach (ShipObject sO in ships) {
-            if (sO.CheckIfUnlocked()) {
-                sO.GetComponent<Button>().interactable = false;
+        if (ships != null) {
+            foreach (ShipObject sO in ships) {
+                if (sO == null) continue;
 
-                sO.Unlock();
+                if (sO.CheckIfUnlocked()) {
+                    sO.Unlock();
 
-                if (sO.id == PlayerPrefs.GetInt("CURRENT_SHIP")) {
-                    sO.OnClick();
+                    if (sO.id == selectedShipId) {
+                        shipToSelect = sO;
+                    }
+                } else {
+                    sO.Lock();
                 }
             }
         }
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+        // Always ensure default ship (ships[0]) is unlocked and has clean bonus text
+        if (ships != null && ships.Length > 0 && ships[0] != null) {
+            ships[0].Unlock();
+            if (ships[0].bonusText != null) {
+                ships[0].bonusText.text = ships[0].bonusString;
+            }
+            if (shipToSelect == null) {
+                shipToSelect = ships[0];
+            }
+        }
+
+        if (shipToSelect != null) {
+            shipToSelect.OnClick(false);
+        }
+    }
 }
